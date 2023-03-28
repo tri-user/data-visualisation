@@ -1,0 +1,15 @@
+.dashboardContent {
+    height: calc(100% - 3rem);
+}
+
+.hexContent {
+    height: calc(100%);
+}
+
+.kaitaiContent {
+    height: calc(100% - 4rem);
+}
+
+.highlight_container {
+    height: calc(100% - 2rem);
+}

@@ -1,0 +1,59 @@
+version: '3'
+services:
+  
+  nginx:
+    container_name: nginx
+    build: 
+      context: ./nginx-visualise
+      dockerfile: Dockerfile
+    ports:
+      - 9015:80
+      - 9016:81
+    depends_on:
+      - backend-flask
+    # network_mode: data-visualisation
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://10.5.0.2:12201
+        labels: data_vis_inspectR_nginx_server
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  backend-flask:
+    container_name: backend-flask
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    # network_mode: data-visualisation
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://10.5.0.2:12201
+        labels: data_vis_inspectR_Backend
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+
+  client:
+      build: 
+        context: ./frontend
+        dockerfile: Dockerfile
+      container_name: client-container
+      ports:
+        - 9017:3000
+      depends_on:
+        - backend-flask
+      # network_mode: data-visualisation
+      logging:
+        driver: gelf
+        options:
+          gelf-address: udp://10.5.0.2:12201
+          labels: data_vis_inspectR_client
+      labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+# this section below (networks) should always be last part of the file
+# networks:
+#     data-visualisation:
+#       external: true
